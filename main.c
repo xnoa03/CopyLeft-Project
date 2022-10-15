@@ -1,5 +1,5 @@
 #include <stdio.h>
 
 int main(){
-  printf("CopyLeft");
+  printf("C\no\np\ny\nL\ne\nf\nt");
 }
