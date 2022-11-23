@@ -1,6 +1,8 @@
 //오픈소스SW이해 및 실습 - Calendar
 
 #include <stdio.h>
+#include <conio.h>
+#include <Windows.h>
 
 void calendar() // 달력을 만드는 함수
 {
@@ -8,7 +10,7 @@ void calendar() // 달력을 만드는 함수
     int lastyear;
     int total_day[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-    printf("년/월을 입력하세요 : ");
+    printf("    년/월을 입력하세요 : ");
     scanf("%d %d", &year, &month);
 
     if (month == 2 && (year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0))
@@ -26,14 +28,15 @@ void calendar() // 달력을 만드는 함수
         date %= 7;
     }
 
-    printf("\n[ %d년 %d월 ]\n\n", year, month);
-    printf(" Sun Mon Tue Wed Thu Fri Sat\n");
+    printf("\n          [ %d년 %d월 ]\n\n", year, month);
+    printf("    Sun Mon Tue Wed Thu Fri Sat");
 
     for (int i = -date; i < total_day[month]; i++)
     {
         if ((i + date) % 7 == 0)
         {
             printf("\n\n");
+            printf("   ");
         }
         if (i < 0)
         {
@@ -45,13 +48,62 @@ void calendar() // 달력을 만드는 함수
         }
     }
 
-    printf("\n\n");
+    return;
+}
 
+void schedule()
+{
+    return;
+}
+
+void all_schedule()
+{
     return;
 }
 
 int main()
 {
-    calendar();
+    SetConsoleTitle("Calendar - 오픈소스SW이해 및 실습");
+    system("mode con cols=36 lines=20");
+
+    int choice;
+
+    while (1)
+    {
+        system("cls");
+        printf("\n");
+        printf("            1. 달력 보기\n\n");
+        printf("         2. 스케줄 등록하기\n\n");
+        printf("       3. 등록된 스케줄 보기\n\n");
+        printf("            4. 종료하기\n\n\n");
+        printf("    원하는 작업을 입력하세요 : ");
+        scanf("%d", &choice);
+        system("cls");
+
+        switch (choice)
+        {
+        case 1:
+            calendar();
+            printf("\n\n\n 계속하려면 아무 키나 누르십시오...");
+            getch();
+            break;
+
+        case 2:
+            schedule();
+            printf("\n\n\n 계속하려면 아무 키나 누르십시오...");
+            getch();
+            break;
+
+        case 3:
+            all_schedule();
+            printf("\n\n\n 계속하려면 아무 키나 누르십시오...");
+            getch();
+            break;
+
+        case 4:
+            return 0;
+        }
+    }
+
     return 0;
 }
