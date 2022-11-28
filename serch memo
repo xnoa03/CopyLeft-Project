@@ -1,52 +1,38 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-
-int main() {
-    int date  = 0;
-    int month = 0;
-    int year = 0;
+void all_schedule()
+{
     int line = 0;
     int pass = 0;
-    char memo[100];
     char serch[100];
     char buffer[100];
-    int count=1;
+    int count = 1;
+    char year[100];
+    char month[100];
+    char date[100];
+    char buffer2[100];
 
-    FILE* fp;
-    
+    FILE* fp = fopen("data.txt", "r");
 
+    printf(" 년/월/일을 입력하세요 : ");
+    scanf("%s %s %s", year, month, date);
+    printf("\n  %s/%s/%s에 기록된 스케줄입니다\n\n\n", year, month, date);
 
-    fp = fopen("data.txt", "r");
-
-    printf("찾을 날짜를 입력하세요(양식:yyyymmdd):");
-    scanf("%s", &serch);
-    printf("%s에 기록된 스케줄입니다\n", serch);
     while (fgets(buffer, 100, fp))
     {
         line++; //한 줄씩 읽음
 
-        if (strstr(buffer, serch))
+        if (strstr(buffer, year) && strstr(buffer, month) && strstr(buffer, date))
         {
+            char *ptr=strtok(buffer,"-");//문자열 자르기 추가
+            printf(" %d.%s\n", count++, strtok(NULL,"\0"));
             pass++;
-            printf("%d.%s",count++, buffer);
         }
-
     }
 
-
-    if (pass == 0) {
-        printf("등록된 스케줄이 없습니다");
+    if (pass == 0)
+    {
+        printf("  등록된 스케줄이 없습니다!");
     }
-
-
-
-
-
 
     fclose(fp);
-    return 0;
-
-
+    return;
 }
