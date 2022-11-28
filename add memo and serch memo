@@ -4,14 +4,10 @@
 
 
 int main(){
-    int date=0;
-    int month=0;
-    int year=0;
+    int date=0,month,year,line,pass=0;
     char memo[100];
     char serch[100];
     char buffer[100];
-    int line=0;
-    int pass=0;
     
     FILE *fp;
     fp = fopen("data.txt", "a+");
@@ -33,17 +29,18 @@ int main(){
     printf("%s에 기록된 스케줄입니다\n",serch);
     while (fgets(buffer, 256, fp)) 
 	{
-		line++; 
+		line++; //한 줄씩 읽음
         
 		if (strstr(buffer, serch)) 
 		{
-            
+            pass++;
 			printf("%s",buffer);
 		}
-        else{
-            printf("등록된 스케줄이 없습니다.");
-        }
+        
 	}
+   if(pass==0){
+       printf("등록된 스케줄이 없습니다");
+   }
 
 
 
