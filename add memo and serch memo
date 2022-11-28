@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+
+int main(){
+    int date=0;
+    int month=0;
+    int year=0;
+    char memo[100];
+    char serch[100];
+    char buffer[100];
+    int line=0;
+    int pass=0;
+    
+    FILE *fp;
+    fp = fopen("data.txt", "a+");
+    printf("스케줄을 추가할 날짜를 입력하세요(양식:yyyy mm dd)\n:");
+    scanf("%d %d %d",&year,&month,&date);
+    fprintf(fp, "%d%d%d ", year, month, date);
+
+    printf("메모를 입력하세요\n:");
+    scanf("%s",memo);
+    fprintf(fp,"%s\n",memo);
+
+     fclose(fp);
+
+    
+    fp = fopen("data.txt", "r");
+
+    printf("찾을 날짜를 입력하세요(양식:yyyymmdd):");
+    scanf("%s",&serch);
+    printf("%s에 기록된 스케줄입니다\n",serch);
+    while (fgets(buffer, 256, fp)) 
+	{
+		line++; 
+        
+		if (strstr(buffer, serch)) 
+		{
+            
+			printf("%s",buffer);
+		}
+        else{
+            printf("등록된 스케줄이 없습니다.");
+        }
+	}
+
+
+
+
+    
+
+    fclose(fp);
+
+    
+   
+}
