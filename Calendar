@@ -1,6 +1,9 @@
 //오픈소스SW이해 및 실습 - Calendar
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <conio.h>
 #include <Windows.h>
 
@@ -53,26 +56,76 @@ void calendar() // 달력을 만드는 함수
 
 void schedule()
 {
+    int date = 0;
+    int month = 0;
+    int year = 0;
+    char memo[100];
+
+    FILE *fp;
+    fp = fopen("data.txt", "a+");
+    printf(" 년/월/일을 입력하세요 : ");
+    scanf("%d %d %d", &date, &month, &year);
+    fprintf(fp, "%d/%d/%d/", date, month, year);
+    printf("\n\n\n          메모를 입력하세요\n\n--> ");
+    scanf("%s", &memo);
+    fprintf(fp, "%s/n", memo);
+
+    fclose(fp);
     return;
 }
 
 void all_schedule()
 {
+    int line = 0;
+    int pass = 0;
+    char serch[100];
+    char buffer[100];
+    int count = 1;
+
+    FILE *fp = fopen("data.txt", "r");
+
+    printf(" 년/월/일을 입력하세요 : ");
+    scanf("%s", &serch);
+    printf("\n\n\n   %s에 기록된 스케줄입니다\n\n--> ", serch);
+
+    while (fgets(buffer, 100, fp))
+    {
+        line++; //한 줄씩 읽음
+
+        if (strstr(buffer, serch))
+        {
+            pass++;
+            printf("%d.%s", count++, buffer);
+        }
+    }
+
+    if (pass == 0)
+    {
+        printf("  등록된 스케줄이 없습니다!");
+    }
+
+    fclose(fp);
     return;
 }
 
 int main()
 {
-    SetConsoleTitle("Calendar - 오픈소스SW이해 및 실습");
+    SetConsoleTitle("Calendar - CopyLeft");
     system("mode con cols=36 lines=20");
 
     int choice;
+
+    time_t timer;
+    struct tm *t;
+    timer = time(NULL);
+    t = localtime(&timer);
 
     while (1)
     {
         system("cls");
         printf("\n");
-        printf("            1. 달력 보기\n\n");
+        printf("         \x1b[33m[%d년 %d월 %d일]\n\n\n", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday);
+        printf("            \x1b[37m1. 달력 보기\n\n");
         printf("         2. 스케줄 등록하기\n\n");
         printf("       3. 등록된 스케줄 보기\n\n");
         printf("            4. 종료하기\n\n\n");
