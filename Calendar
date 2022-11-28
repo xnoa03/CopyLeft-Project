@@ -60,15 +60,17 @@ void schedule()
     int month = 0;
     int year = 0;
     char memo[100];
+    char zero[100];
 
     FILE *fp;
     fp = fopen("data.txt", "a+");
     printf(" 년/월/일을 입력하세요 : ");
     scanf("%d %d %d", &date, &month, &year);
-    fprintf(fp, "%d/%d/%d/", date, month, year);
+    fprintf(fp, "%d/%d/%d-", date, month, year);
     printf("\n\n\n          메모를 입력하세요\n\n--> ");
-    scanf("%s", &memo);
-    fprintf(fp, "%s/n", memo);
+    gets(zero);
+    gets(memo);
+    fprintf(fp, "%s\n", memo);
 
     fclose(fp);
     return;
@@ -81,21 +83,26 @@ void all_schedule()
     char serch[100];
     char buffer[100];
     int count = 1;
+    char year[100];
+    char month[100];
+    char date[100];
+    char buffer2[100];
 
     FILE *fp = fopen("data.txt", "r");
 
     printf(" 년/월/일을 입력하세요 : ");
-    scanf("%s", &serch);
-    printf("\n\n\n   %s에 기록된 스케줄입니다\n\n--> ", serch);
+    scanf("%s %s %s", year, month, date);
+    printf("\n  \x1b[33m%s/%s/%s\x1b[37m에 기록된 스케줄입니다\n\n\n", year, month, date);
 
     while (fgets(buffer, 100, fp))
     {
         line++; //한 줄씩 읽음
 
-        if (strstr(buffer, serch))
+        if (strstr(buffer, year) && strstr(buffer, month) && strstr(buffer, date))
         {
+            char *ptr = strtok(buffer, "-");
+            printf(" %d.%s\n", count++, strtok(NULL, "\0"));
             pass++;
-            printf("%d.%s", count++, buffer);
         }
     }
 
