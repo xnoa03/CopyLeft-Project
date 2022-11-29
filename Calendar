@@ -78,7 +78,6 @@ void schedule()
 
 void all_schedule()
 {
-    int line = 0;
     int pass = 0;
     char serch[100];
     char buffer[100];
@@ -96,19 +95,18 @@ void all_schedule()
 
     while (fgets(buffer, 100, fp))
     {
-        line++; //한 줄씩 읽음
 
         if (strstr(buffer, year) && strstr(buffer, month) && strstr(buffer, date))
         {
             char *ptr = strtok(buffer, "-");
-            printf(" %d.%s\n", count++, strtok(NULL, "\0"));
+            printf(" %d. %s\n", count++, strtok(NULL, "\0"));
             pass++;
         }
     }
 
     if (pass == 0)
     {
-        printf("  등록된 스케줄이 없습니다!");
+        printf("      등록된 스케줄이 없습니다!");
     }
 
     fclose(fp);
