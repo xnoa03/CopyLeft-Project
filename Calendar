@@ -7,6 +7,101 @@
 #include <conio.h>
 #include <Windows.h>
 
+int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
+{
+    struct tm *t;
+    time_t base = time(NULL);
+
+    t = localtime(&base);
+
+    int dates;
+
+    int y2 = t->tm_year + 1900;
+    int m2 = t->tm_mon + 1;
+    int d2 = t->tm_mday;
+    dates = calculator_day(y1, m1, d1) - calculator_day(y2, m2, d2);
+
+    return dates;
+}
+
+int calculator_day(int y, int m, int d) // 디데이 계산하는 함수
+{
+    int month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    long total = 0L;
+
+    total = (y - 1) * 365L + (y - 1) / 4 - (y - 1) / 100 + (y - 1) / 400;
+    if (!(y % 4) && y % 100 || !(y % 400))
+        month[1]++;
+    for (int i = 0; i < m - 1; i++)
+    {
+        total += month[i];
+    }
+    total += d;
+
+    return total;
+}
+
+int search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
+{
+    int i = 0;
+    int y, m, d;
+    int date;
+    int temp;
+    int count = 0;
+    char buffer[100];
+
+    FILE *fp = fopen("data.txt", "r");
+
+    if (fp == NULL)
+    {
+        return 0;
+    }
+
+    fgets(buffer, 100, fp);
+
+    while (buffer[i] != NULL)
+    {
+        if ('0' <= buffer[i] && buffer[i] <= '9')
+        {
+            {
+                temp = 0;
+                do
+                {
+                    temp *= 10;
+                    temp += (buffer[i++] - '0');
+                } while ('0' <= buffer[i] && buffer[i] <= '9');
+            }
+
+            if (count == 0)
+            {
+                y = temp;
+            }
+            else if (count == 1)
+            {
+                m = temp;
+            }
+            else
+            {
+                d = temp;
+            }
+
+            count++;
+        }
+        else if (buffer[i] == '/')
+        {
+            i++;
+        }
+        else if (buffer[i] == '-')
+        {
+            break;
+        }
+    }
+
+    date = d_day(y, m, d);
+
+    return date;
+}
+
 void calendar() // 달력을 만드는 함수
 {
     int year, month, date;
@@ -54,7 +149,7 @@ void calendar() // 달력을 만드는 함수
     return;
 }
 
-void schedule()
+void schedule() // 스케줄 등록 함수
 {
     int date = 0;
     int month = 0;
@@ -76,16 +171,14 @@ void schedule()
     return;
 }
 
-void all_schedule()
+void open_schedule() // 등록된 스케줄을 보는 함수
 {
     int pass = 0;
-    char serch[100];
     char buffer[100];
     int count = 1;
-    char year[100];
-    char month[100];
-    char date[100];
-    char buffer2[100];
+    char year[5];
+    char month[5];
+    char date[5];
 
     FILE *fp = fopen("data.txt", "r");
 
@@ -118,18 +211,39 @@ int main()
     SetConsoleTitle("Calendar - CopyLeft");
     system("mode con cols=36 lines=20");
 
-    int choice;
+    int choice = 0;
+    int date = 0;
 
     time_t timer;
     struct tm *t;
     timer = time(NULL);
     t = localtime(&timer);
 
+    date = search();
+
     while (1)
     {
         system("cls");
         printf("\n");
         printf("         \x1b[33m[%d년 %d월 %d일]\n\n\n", t->tm_year + 1900, t->tm_mon + 1, t->tm_mday);
+
+        if (date > 10)
+        {
+            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[33m%d\n\n\n\n", date);
+        }
+        else if (5 < date && date <= 10)
+        {
+            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[32m%d\n\n\n\n", date);
+        }
+        else if (0 < date && date <= 5)
+        {
+            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[31m%d\n\n\n\n", date);
+        }
+        else if (date == 0)
+        {
+            printf("\x1b[31m  오늘 등록된 스케줄을 확인하세요!\n\n\n\n");
+        }
+
         printf("            \x1b[37m1. 달력 보기\n\n");
         printf("         2. 스케줄 등록하기\n\n");
         printf("       3. 등록된 스케줄 보기\n\n");
@@ -153,7 +267,7 @@ int main()
             break;
 
         case 3:
-            all_schedule();
+            open_schedule();
             printf("\n\n\n 계속하려면 아무 키나 누르십시오...");
             getch();
             break;
