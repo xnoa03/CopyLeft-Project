@@ -6,6 +6,7 @@
 #include <time.h>
 #include <conio.h>
 #include <Windows.h>
+#include <memory.h>
 
 int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
 {
@@ -19,6 +20,7 @@ int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
     int y2 = t->tm_year + 1900;
     int m2 = t->tm_mon + 1;
     int d2 = t->tm_mday;
+
     dates = calculator_day(y1, m1, d1) - calculator_day(y2, m2, d2);
 
     return dates;
@@ -30,18 +32,21 @@ int calculator_day(int y, int m, int d) // 디데이 계산하는 함수
     long total = 0L;
 
     total = (y - 1) * 365L + (y - 1) / 4 - (y - 1) / 100 + (y - 1) / 400;
+
     if (!(y % 4) && y % 100 || !(y % 400))
         month[1]++;
+
     for (int i = 0; i < m - 1; i++)
     {
         total += month[i];
     }
+
     total += d;
 
     return total;
 }
 
-int search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
+int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
 {
     int i = 0;
     int y, m, d;
@@ -51,11 +56,6 @@ int search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
     char buffer[100];
 
     FILE *fp = fopen("data.txt", "r");
-
-    if (fp == NULL)
-    {
-        return 0;
-    }
 
     fgets(buffer, 100, fp);
 
@@ -102,14 +102,108 @@ int search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
     return date;
 }
 
+int calendar_search(char *ym, int d)
+{
+    int i = 0;
+    int count = 0;
+    int flag = 0;
+    int temp = 0;
+    int date;
+    char buffer[100];
+
+    FILE *fp = fopen("data.txt", "r");
+
+    while (fgets(buffer, 100, fp))
+    {
+        i = 0;
+        count = 0;
+
+        while (buffer[i] != NULL)
+        {
+            if ('0' <= buffer[i] && buffer[i] <= '9')
+            {
+                {
+                    temp = 0;
+                    do
+                    {
+                        temp *= 10;
+                        temp += (buffer[i++] - '0');
+                    } while ('0' <= buffer[i] && buffer[i] <= '9');
+                }
+
+                if (count == 2)
+                {
+                    date = temp;
+                    break;
+                }
+
+                count++;
+            }
+            else if (buffer[i] == '-')
+            {
+                break;
+            }
+            else
+            {
+                i++;
+            }
+        }
+
+        if (strstr(buffer, ym))
+        {
+            if (date == d)
+            {
+                flag = 1;
+                break;
+            }
+        }
+    }
+
+    return flag;
+}
+
 void calendar() // 달력을 만드는 함수
 {
+    char ym[10];
+    int j = 0;
+    int temp;
+    int count = 0;
     int year, month, date;
     int lastyear;
     int total_day[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     printf("    년/월을 입력하세요 : ");
-    scanf("%d %d", &year, &month);
+    scanf("%s", ym);
+
+    while (ym[j] != NULL)
+    {
+        if ('0' <= ym[j] && ym[j] <= '9')
+        {
+            {
+                temp = 0;
+                do
+                {
+                    temp *= 10;
+                    temp += (ym[j++] - '0');
+                } while ('0' <= ym[j] && ym[j] <= '9');
+            }
+
+            if (count == 0)
+            {
+                year = temp;
+                count++;
+            }
+            else
+            {
+                month = temp;
+                break;
+            }
+        }
+        else
+        {
+            j++;
+        }
+    }
 
     if (month == 2 && (year) % 4 == 0 && ((year) % 100 != 0 || (year) % 400 == 0))
     {
@@ -142,7 +236,16 @@ void calendar() // 달력을 만드는 함수
         }
         else
         {
-            printf("%4d", i + 1);
+            temp = calendar_search(ym, i + 1);
+
+            if (temp == 1)
+            {
+                printf("\x1b[34m%4d\x1b[37m", i + 1);
+            }
+            else
+            {
+                printf("%4d", i + 1);
+            }
         }
     }
 
@@ -151,17 +254,15 @@ void calendar() // 달력을 만드는 함수
 
 void schedule() // 스케줄 등록 함수
 {
-    int date = 0;
-    int month = 0;
-    int year = 0;
+    char ymd[20];
     char memo[100];
     char zero[100];
 
     FILE *fp;
     fp = fopen("data.txt", "a+");
     printf(" 년/월/일을 입력하세요 : ");
-    scanf("%d %d %d", &date, &month, &year);
-    fprintf(fp, "%d/%d/%d-", date, month, year);
+    scanf("%s", ymd);
+    fprintf(fp, "%s-", ymd);
     printf("\n\n\n          메모를 입력하세요\n\n--> ");
     gets(zero);
     gets(memo);
@@ -176,20 +277,17 @@ void open_schedule() // 등록된 스케줄을 보는 함수
     int pass = 0;
     char buffer[100];
     int count = 1;
-    char year[5];
-    char month[5];
-    char date[5];
+    char com[20];
 
     FILE *fp = fopen("data.txt", "r");
 
     printf(" 년/월/일을 입력하세요 : ");
-    scanf("%s %s %s", year, month, date);
-    printf("\n  \x1b[33m%s/%s/%s\x1b[37m에 기록된 스케줄입니다\n\n\n", year, month, date);
+    scanf("%s", com);
+    printf("\n  \x1b[33m%s\x1b[37m에 기록된 스케줄입니다\n\n\n", com);
 
     while (fgets(buffer, 100, fp))
     {
-
-        if (strstr(buffer, year) && strstr(buffer, month) && strstr(buffer, date))
+        if (strstr(buffer, com))
         {
             char *ptr = strtok(buffer, "-");
             printf(" %d. %s\n", count++, strtok(NULL, "\0"));
@@ -212,14 +310,14 @@ int main()
     system("mode con cols=36 lines=20");
 
     int choice = 0;
-    int date = 0;
+    int date = 1;
 
     time_t timer;
     struct tm *t;
     timer = time(NULL);
     t = localtime(&timer);
 
-    date = search();
+    date = d_day_search();
 
     while (1)
     {
