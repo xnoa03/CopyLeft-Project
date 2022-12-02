@@ -66,6 +66,11 @@ int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함�
 
     FILE *fp = fopen("data.txt", "r");
 
+    if (fp == NULL)
+    {
+        return -1;
+    }
+
     while (fgets(buffer, 100, fp))
     {
         i = 0;
@@ -332,7 +337,7 @@ int main()
     system("mode con cols=36 lines=20");
 
     int choice = 0;
-    int date = 1;
+    int date = -1;
 
     time_t timer;
     struct tm *t;
