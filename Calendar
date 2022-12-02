@@ -48,8 +48,17 @@ int calculator_day(int y, int m, int d) // 디데이 계산하는 함수
 
 int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함수
 {
+    struct tm *t;
+    time_t base = time(NULL);
+
+    t = localtime(&base);
+
+    int y2 = t->tm_year + 1900;
+    int m2 = t->tm_mon + 1;
+    int d2 = t->tm_mday;
+
     int i = 0;
-    int y, m, d;
+    int y = 10000, m = 13, d = 32;
     int date;
     int temp;
     int count = 0;
@@ -57,43 +66,56 @@ int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함�
 
     FILE *fp = fopen("data.txt", "r");
 
-    fgets(buffer, 100, fp);
-
-    while (buffer[i] != NULL)
+    while (fgets(buffer, 100, fp))
     {
-        if ('0' <= buffer[i] && buffer[i] <= '9')
+        i = 0;
+        count = 0;
+
+        while (buffer[i] != NULL)
         {
+            if ('0' <= buffer[i] && buffer[i] <= '9')
             {
-                temp = 0;
-                do
                 {
-                    temp *= 10;
-                    temp += (buffer[i++] - '0');
-                } while ('0' <= buffer[i] && buffer[i] <= '9');
-            }
+                    temp = 0;
+                    do
+                    {
+                        temp *= 10;
+                        temp += (buffer[i++] - '0');
+                    } while ('0' <= buffer[i] && buffer[i] <= '9');
+                }
 
-            if (count == 0)
-            {
-                y = temp;
-            }
-            else if (count == 1)
-            {
-                m = temp;
-            }
-            else
-            {
-                d = temp;
-            }
+                if (count == 0)
+                {
+                    if (temp <= y && temp >= y2)
+                    {
+                        y = temp;
+                    }
+                }
+                else if (count == 1)
+                {
+                    if (temp <= m && temp >= m2)
+                    {
+                        m = temp;
+                    }
+                }
+                else
+                {
+                    if (temp <= d && temp >= d2)
+                    {
+                        d = temp;
+                    }
+                }
 
-            count++;
-        }
-        else if (buffer[i] == '/')
-        {
-            i++;
-        }
-        else if (buffer[i] == '-')
-        {
-            break;
+                count++;
+            }
+            else if (buffer[i] == '/')
+            {
+                i++;
+            }
+            else if (buffer[i] == '-')
+            {
+                break;
+            }
         }
     }
 
