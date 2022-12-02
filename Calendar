@@ -6,7 +6,6 @@
 #include <time.h>
 #include <conio.h>
 #include <Windows.h>
-#include <memory.h>
 
 int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
 {
