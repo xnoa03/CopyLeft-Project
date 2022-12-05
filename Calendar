@@ -286,7 +286,7 @@ void schedule() // 스케줄 등록 함수
 
     FILE *fp;
     fp = fopen("data.txt", "a+");
-    printf(" 년/월/일을 입력하세요 : ");
+    printf(" 년/월/일을 입력하세요 : ");//등록 시 2022/12/02와 같은 방식으로 
     scanf("%s", ymd);
     fprintf(fp, "%s-", ymd);
     printf("\n\n\n          메모를 입력하세요\n\n--> ");
@@ -308,7 +308,7 @@ void open_schedule() // 등록된 스케줄을 보는 함수
     FILE *fp = fopen("data.txt", "r");
 
     printf(" 년/월/일을 입력하세요 : ");
-    scanf("%s", com);
+    scanf("%s", com);//입력 시 날짜가 한자리 수인 경우 ex)05 처럼입력(오류 방지 위함)
     printf("\n  \x1b[33m%s\x1b[37m에 기록된 스케줄입니다\n\n\n", com);
 
     while (fgets(buffer, 100, fp))
