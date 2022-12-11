@@ -306,7 +306,7 @@ void schedule() // 스케줄 등록 함수
     }
 
     fprintf(fp, "%s-", ymd);
-    printf("\n\n\n          메모를 입력하세요\n\n--> ");
+    printf("\n\n\n          메모를 입력하세요\n\n==> ");
     gets(zero);
     gets(memo);
     fprintf(fp, "%s\n", memo);
