@@ -7,6 +7,8 @@
 #include <conio.h>
 #include <Windows.h>
 
+int day_count = 0;
+
 int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
 {
     struct tm *t;
@@ -28,7 +30,7 @@ int d_day(int y1, int m1, int d1) // 디데이 만드는 함수
 int calculator_day(int y, int m, int d) // 디데이 계산하는 함수
 {
     int month[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    long total = 0L;
+    long total = 0;
 
     total = (y - 1) * 365L + (y - 1) / 4 - (y - 1) / 100 + (y - 1) / 400;
 
@@ -58,7 +60,7 @@ int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함�
 
     int i = 0;
     int y = 10000, m = 13, d = 32;
-    int date;
+    int date = -1;
     int temp;
     int count = 0;
     char buffer[100];
@@ -111,6 +113,7 @@ int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함�
                 }
 
                 count++;
+                day_count++;
             }
             else if (buffer[i] == '/')
             {
@@ -123,7 +126,10 @@ int d_day_search() // 디데이 계산을 위해 'data.txt'를 탐색하는 함�
         }
     }
 
-    date = d_day(y, m, d);
+    if (count != 0)
+    {
+        date = d_day(y, m, d);
+    }
 
     return date;
 }
@@ -200,6 +206,11 @@ void calendar() // 달력을 만드는 함수
 
     printf("    년/월을 입력하세요 : ");
     scanf("%s", ym);
+
+    if (ym[0] == 'b')
+    {
+        return;
+    }
 
     while (ym[j] != NULL)
     {
@@ -286,8 +297,14 @@ void schedule() // 스케줄 등록 함수
 
     FILE *fp;
     fp = fopen("data.txt", "a+");
-    printf(" 년/월/일을 입력하세요 : ");//등록 시 2022/12/02와 같은 방식으로 
+    printf(" 년/월/일을 입력하세요 : ");
     scanf("%s", ymd);
+
+    if (ymd[0] == 'b')
+    {
+        return;
+    }
+
     fprintf(fp, "%s-", ymd);
     printf("\n\n\n          메모를 입력하세요\n\n--> ");
     gets(zero);
@@ -308,7 +325,13 @@ void open_schedule() // 등록된 스케줄을 보는 함수
     FILE *fp = fopen("data.txt", "r");
 
     printf(" 년/월/일을 입력하세요 : ");
-    scanf("%s", com);//입력 시 날짜가 한자리 수인 경우 ex)05 처럼입력(오류 방지 위함)
+    scanf("%s", com);
+
+    if (com[0] == 'b')
+    {
+        return;
+    }
+
     printf("\n  \x1b[33m%s\x1b[37m에 기록된 스케줄입니다\n\n\n", com);
 
     while (fgets(buffer, 100, fp))
@@ -353,19 +376,19 @@ int main()
 
         if (date > 10)
         {
-            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[33m%d\n\n\n\n", date);
+            printf("  \x1b[37m다가오는 스케줄 D-DAY : \x1b[33m%d (%d건)\n\n\n\n", date, day_count / 3);
         }
         else if (5 < date && date <= 10)
         {
-            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[32m%d\n\n\n\n", date);
+            printf("  \x1b[37m다가오는 스케줄 D-DAY : \x1b[32m%d (%d건)\n\n\n\n", date, day_count / 3);
         }
         else if (0 < date && date <= 5)
         {
-            printf("      \x1b[37m다가오는 스케줄 D-DAY : \x1b[31m%d\n\n\n\n", date);
+            printf("  \x1b[37m다가오는 스케줄 D-DAY : \x1b[31m%d (%d건)\n\n\n\n", date, day_count / 3);
         }
         else if (date == 0)
         {
-            printf("\x1b[31m  오늘 등록된 스케줄을 확인하세요!\n\n\n\n");
+            printf("\x1b[31m  오늘 등록된 스케줄을 확인하세요!\n                            (%d건)\n\n\n", day_count / 3);
         }
 
         printf("            \x1b[37m1. 달력 보기\n\n");
